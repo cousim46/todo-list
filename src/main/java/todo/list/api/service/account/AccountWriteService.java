@@ -1,6 +1,7 @@
 package todo.list.api.service.account;
 
 
+import static todo.list.exception.ErrorCode.NOT_EXIST_ACCOUNT_INFO;
 import static todo.list.exception.ErrorCode.NOT_MATCH_PASSWORD_OR_ID;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,12 @@ public class AccountWriteService {
             new TodoListException(NOT_MATCH_PASSWORD_OR_ID));
         checkPassword(password, account.getPassword(), account.getSalt());
         return tokenProvider.get(account.getId(), account.getRoleName(),now);
+    }
+
+    public void withdraw(Long accountId) {
+        Account account = accountRepository.findById(accountId)
+            .orElseThrow(() -> new TodoListException(NOT_EXIST_ACCOUNT_INFO));
+        accountRepository.delete(account);
     }
 
     private void checkPassword(String inputPassword,String encodePassword, String salt) {
