@@ -52,4 +52,8 @@ public class Account extends BaseEntity {
     public static Account signUp(String nickname, String loginId, String password, String salt) {
         return new Account(nickname, loginId, password, Role.USER, salt);
     }
+
+    public String getRoleName() {
+        return role.name();
+    }
 }
