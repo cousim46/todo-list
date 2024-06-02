@@ -172,4 +172,39 @@ class AccountWriteServiceTest {
         assertThat(todoListException.getExceptionStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(todoListException.getExceptionMessage()).isEqualTo("아이디 또는 비밀번호가 올바르지 않습니다.");
     }
+
+    @DisplayName("탈퇴하려는 회원이 존재하지 않을 경우 예외가 발생한다.")
+    @Test
+    void occurNotExistAccountWithdrawException() {
+        //given
+        Long accountId = -1L;
+
+        //when
+        TodoListException todoListException = assertThrows(TodoListException.class,
+            () -> accountWriteService.withdraw(accountId));
+
+        //then
+        assertThat(todoListException.getExceptionStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(todoListException.getExceptionMessage()).isEqualTo("회원이 존재하지 않습니다.");
+    }
+
+    @DisplayName("회원 id로 회원탈퇴를 한다.")
+    @Test
+    void withdraw() {
+        //given
+        String loginId = "loginId";
+        String nickname = "nickname";
+        String password = "password";
+        String salt = "1234";
+        Account savedAccount = accountRepository.save(Account.signUp(nickname, loginId, password, salt));
+        Long savedAccountId = savedAccount.getId();
+
+        //when
+        accountWriteService.withdraw(savedAccountId);
+
+        //then
+        Account account = accountRepository.findById(savedAccountId).orElse(null);
+        assertThat(account).isNull();
+
+    }
 }
