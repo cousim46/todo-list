@@ -17,8 +17,9 @@ public class AccountWriteService {
 
     public void singUp(String loginId, String nickname, String password, String salt) {
         duplicateValidation(loginId, nickname);
-        String encodePassword = encoder.encode(password + salt);
-        accountRepository.save(Account.signUp(nickname,loginId, encodePassword, salt));
+        String encodeSalt = encoder.encode(salt);
+        String encodePassword = encoder.encode(password + encodeSalt);
+        accountRepository.save(Account.signUp(nickname,loginId, encodePassword, encodeSalt));
     }
 
     private void duplicateValidation(String loginId, String nickname) {
