@@ -11,3 +11,5 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: create
+jwt:
+  secret-key : RnJhbWV3b3Jrc3ByaW5nQm9vdFZlcnNpb25UaHJlZUxhbmd1YWdlSmF2YURhdGFiYXNlSDJCYWNrZW5kRGV2bG9wZXJUZXN0
