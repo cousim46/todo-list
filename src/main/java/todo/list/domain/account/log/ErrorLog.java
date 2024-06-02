@@ -16,7 +16,7 @@ public class ErrorLog extends BaseEntity {
     @Column(nullable = false)
     private int statusCode;
     @Column(nullable = false)
-    private String httpMethodName;
+    private String httpMethod;
     @Column(nullable = false)
     private String status;
     @Column(nullable = false)
@@ -24,17 +24,17 @@ public class ErrorLog extends BaseEntity {
     @Column(nullable = false)
     private String requestPath;
 
-    private ErrorLog(int statusCode, String httpMethodName, String status, String errorMessage,
+    private ErrorLog(int statusCode, String httpMethod, String status, String errorMessage,
         String requestPath) {
         this.statusCode = statusCode;
-        this.httpMethodName = httpMethodName;
+        this.httpMethod = httpMethod;
         this.status = status;
         this.errorMessage = errorMessage;
         this.requestPath = requestPath;
     }
 
-    public static ErrorLog create(int statusCode, String httpMethodName, String status, String errorMessage,
+    public static ErrorLog create(int statusCode, String httpMethod, String status, String errorMessage,
         String requestPath) {
-        return new ErrorLog(statusCode, httpMethodName,status, errorMessage, requestPath);
+        return new ErrorLog(statusCode, httpMethod,status, errorMessage, requestPath);
     }
 }
