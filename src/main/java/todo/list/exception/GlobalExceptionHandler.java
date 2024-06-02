@@ -25,6 +25,7 @@ public class GlobalExceptionHandler {
 
     private final ErrorLogRepository errorLogRepository;
     private final HttpServletRequest request;
+    private final ObjectMapper objectMapper;
 
     @ExceptionHandler(TodoListException.class)
     public ResponseEntity<CommonResponse> responseTodoListException(
@@ -39,5 +40,52 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
             CommonResponse.of(exception.getExceptionStatus(), exception.getExceptionMessage()),
             exception.getExceptionStatus());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CommonResponse> responseMethodArgumentNotValidException(
+        MethodArgumentNotValidException e) throws JsonProcessingException {
+        Map<String, String> error = new HashMap<>();
+        e.getAllErrors().forEach(it -> {
+            error.put(((FieldError) it).getField(), it.getDefaultMessage());
+        });
+        errorLogRepository.save(
+            ErrorLog.create(400,
+                request.getMethod(), "BAD_REQUEST",
+                objectMapper.writeValueAsString(error),
+                request.getRequestURL().toString().replace(ADDRESS, "")
+            )
+        );
+        return new ResponseEntity<>(
+            CommonResponse.badRequest(error), HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<CommonResponse> responseException(Exception e) {
+        errorLogRepository.save(
+            ErrorLog.create(500,
+                request.getMethod(), "INTERNAL_SERVER_ERROR",
+                e.getMessage(), request.getRequestURL().toString().replace(ADDRESS, "")
+            )
+        );
+        request.getPathInfo(); //  /api/forms
+        return new ResponseEntity<>(
+            CommonResponse.serverError("서버 에러"), HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ResponseEntity<CommonResponse> sQLIntegrityConstraintViolationException(
+        SQLIntegrityConstraintViolationException e) {
+        errorLogRepository.save(
+            ErrorLog.create(400,
+                request.getMethod(), "BAD_REQUEST",
+                "무결성 제약 위반이 발생하였습니다", request.getRequestURL().toString().replace(ADDRESS, "")
+            )
+        );
+        return new ResponseEntity<>(
+            CommonResponse.badRequest("무결성 제약 위반이 발생하였습니다"), HttpStatus.BAD_REQUEST
+        );
     }
 }
