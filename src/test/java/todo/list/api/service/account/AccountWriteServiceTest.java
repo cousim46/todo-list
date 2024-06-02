@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import todo.list.domain.account.Account;
 import todo.list.domain.account.AccountRepository;
+import todo.list.domain.token.Token;
 import todo.list.exception.TodoListException;
+import todo.list.token.TokenRepository;
+import todo.list.token.response.TokenResponse;
 
 @SpringBootTest
 class AccountWriteServiceTest {
@@ -23,9 +27,12 @@ class AccountWriteServiceTest {
 
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private TokenRepository tokenRepository;
 
     @AfterEach
     void clear() {
+        tokenRepository.deleteAllInBatch();
         accountRepository.deleteAllInBatch();
     }
 
@@ -39,15 +46,15 @@ class AccountWriteServiceTest {
         String salt = "salt";
 
         //when
-        accountWriteService.singUp(loginId, nickname, password, salt);
+        accountWriteService.signUp(loginId, nickname, password, salt);
 
         //then
         List<Account> findAllAccounts = accountRepository.findAll();
         assertThat(findAllAccounts)
             .hasSize(1)
-            .extracting("nickname", "loginId", "salt")
+            .extracting("nickname", "loginId")
             .contains(
-                tuple(nickname, loginId, salt)
+                tuple(nickname, loginId)
             );
     }
 
@@ -63,7 +70,7 @@ class AccountWriteServiceTest {
         String inputNickname = "nickname2";
         //when
         TodoListException todoListException = assertThrows(TodoListException.class,
-            () -> accountWriteService.singUp(loginId, inputNickname, password, salt));
+            () -> accountWriteService.signUp(loginId, inputNickname, password, salt));
 
         //then
         assertThat(todoListException.getExceptionMessage()).isEqualTo("중복된 아이디가 존재합니다.");
@@ -83,10 +90,86 @@ class AccountWriteServiceTest {
         String inputLoginId = "loginId2";
         //when
         TodoListException todoListException = assertThrows(TodoListException.class,
-            () -> accountWriteService.singUp(inputLoginId, nickname, password, salt));
+            () -> accountWriteService.signUp(inputLoginId, nickname, password, salt));
 
         //then
         assertThat(todoListException.getExceptionMessage()).isEqualTo("중복된 닉네임이 존재합니다.");
         assertThat(todoListException.getExceptionStatus()).isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @DisplayName("로그인 성공 시 토큰을 발급한다.")
+    @Test
+    void successLogin() {
+        //given
+        String loginId = "loginId";
+        String nickname = "nickname";
+        String password = "password";
+        String salt = "1234";
+        LocalDateTime now = LocalDateTime.of(2024, 6, 2, 12, 0, 0);
+        accountWriteService.signUp(loginId, nickname, password, salt);
+        //when
+        TokenResponse token = accountWriteService.login(loginId, password, now);
+
+        //then
+        List<Account> accounts = accountRepository.findAll();
+        List<Token> tokens = tokenRepository.findAll();
+
+        assertThat(accounts)
+            .hasSize(1)
+            .extracting("loginId", "nickname")
+            .contains(
+                tuple(loginId, nickname)
+            );
+        assertThat(tokens)
+            .hasSize(1)
+            .extracting("access", "accessExpireAt", "refresh", "refreshExpireAt")
+            .contains(
+                tuple(token.accessToken(), token.accessTokenExpireAt(), token.refreshToken(),
+                    token.refreshTokenExpireAt())
+            );
+
+
+    }
+
+    @DisplayName("로그인하려는 아이디가 틀릴 경우 예외가 발생한다.")
+    @Test
+    void occurWrongLoginIdException() {
+        //given
+        String loginId = "loginId";
+        String nickname = "nickname";
+        String password = "password";
+        String salt = "1234";
+        accountRepository.save(Account.signUp(nickname, loginId, password, salt));
+        String wrongLoginId = "test";
+        LocalDateTime now = LocalDateTime.now();
+
+        //when
+        TodoListException todoListException = assertThrows(TodoListException.class,
+            () -> accountWriteService.login(wrongLoginId, password, now));
+
+        //then
+        assertThat(todoListException.getExceptionStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(todoListException.getExceptionMessage()).isEqualTo("아이디 또는 비밀번호가 올바르지 않습니다.");
+    }
+
+    @DisplayName("로그인 하려는 사용자가 비밀번호를 틀릴 시 예외가 발생한다.")
+    @Test
+    void occurWrongPasswordException() {
+        //given
+        String loginId = "loginId";
+        String nickname = "nickname";
+        String password = "password";
+        String salt = "1234";
+        accountRepository.save(Account.signUp(nickname, loginId, password, salt));
+        LocalDateTime now = LocalDateTime.now();
+        String wrongPassword = "1234";
+
+        //when
+        TodoListException todoListException = assertThrows(TodoListException.class,
+            () -> accountWriteService.login(loginId, wrongPassword, now));
+
+        //then
+        assertThat(todoListException.getExceptionStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(todoListException.getExceptionMessage()).isEqualTo("아이디 또는 비밀번호가 올바르지 않습니다.");
     }
 }
