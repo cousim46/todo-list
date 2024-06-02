@@ -18,7 +18,7 @@ public class AccountController {
 
     @PostMapping
     public void signUp(@Valid @RequestBody AccountSignUpRequest request) {
-        accountWriteService.singUp(request.loginId(),request.nickname(),request.password(),
+        accountWriteService.signUp(request.loginId(),request.nickname(),request.password(),
             PasswordHelper.createSalt());
     }
 
