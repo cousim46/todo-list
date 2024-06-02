@@ -1,6 +1,7 @@
 package todo.list.security;
 
 import static todo.list.exception.ErrorCode.EXPIRE_TOKEN_TIME;
+import static todo.list.exception.ErrorCode.NO_AUTHENTICATION;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -36,6 +37,12 @@ public class LoginInterception implements HandlerMethodArgumentResolver {
         WebDataBinderFactory binderFactory
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String[] roles = authentication.getAuthorities().stream().findFirst().toString().split("_");
+        String authRole = roles[1];
+        authRole = authRole.replaceAll("]", "");
+        if (authRole.equalsIgnoreCase("ANONYMOUS")) {
+            throw new TodoListException(NO_AUTHENTICATION);
+        }
         Account account = accountRepository.findById(
             Long.parseLong(authentication.getName())
         ).orElseThrow(() -> new TodoListException(EXPIRE_TOKEN_TIME));
