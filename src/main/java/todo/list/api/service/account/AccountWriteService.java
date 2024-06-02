@@ -35,7 +35,7 @@ public class AccountWriteService {
         return tokenProvider.get(account.getId(), account.getRoleName(),now);
     }
 
-    public void checkPassword(String inputPassword,String encodePassword, String salt) {
+    private void checkPassword(String inputPassword,String encodePassword, String salt) {
         if(!encoder.matches(inputPassword + salt, encodePassword)) {
             throw new TodoListException(NOT_MATCH_PASSWORD_OR_ID);
         }
