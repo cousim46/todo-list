@@ -1,9 +1,11 @@
 package todo.list.domain.account;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
@@ -11,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import todo.list.domain.BaseEntity;
 import todo.list.domain.account.enums.Role;
+import todo.list.domain.token.Token;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,6 +43,9 @@ public class Account extends BaseEntity {
 
     @Column(nullable = false)
     private String salt;
+
+    @OneToOne(mappedBy = "account", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private Token token;
 
     private Account(String nickname, String loginId, String password, Role role, String salt) {
         this.nickname = nickname;
