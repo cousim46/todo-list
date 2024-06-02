@@ -19,6 +19,7 @@ import todo.list.token.response.TokenResponse;
 public class AccountWriteService {
     private final BCryptPasswordEncoder encoder;
     private final AccountRepository accountRepository;
+    private final TokenProvider tokenProvider;
 
     public void signUp(String loginId, String nickname, String password, String salt) {
         duplicateValidation(loginId, nickname);
@@ -26,6 +27,20 @@ public class AccountWriteService {
         String encodePassword = encoder.encode(password + encodeSalt);
         accountRepository.save(Account.signUp(nickname, loginId, encodePassword, encodeSalt));
     }
+
+    public TokenResponse login(String loginId, String password, LocalDateTime now) {
+        Account account = accountRepository.findByLoginId(loginId).orElseThrow(() ->
+            new TodoListException(NOT_MATCH_PASSWORD_OR_ID));
+        checkPassword(password, account.getPassword(), account.getSalt());
+        return tokenProvider.get(account.getId(), account.getRoleName(),now);
+    }
+
+    public void checkPassword(String inputPassword,String encodePassword, String salt) {
+        if(!encoder.matches(inputPassword + salt, encodePassword)) {
+            throw new TodoListException(NOT_MATCH_PASSWORD_OR_ID);
+        }
+    }
+
     private void duplicateValidation(String loginId, String nickname) {
         if(accountRepository.existsByLoginId(loginId)) {
             throw new TodoListException(ErrorCode.DUPLICATE_LOGIN_ID);
