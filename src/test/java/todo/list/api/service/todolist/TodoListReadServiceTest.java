@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.List;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +103,6 @@ class TodoListReadServiceTest {
 
         //then
         assertThat(todoListException.getExceptionMessage()).isEqualTo("회원이 존재하지 않습니다.");
-        assertThat(todoListException.getExceptionStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(todoListException.getExceptionStatus()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

@@ -65,7 +65,7 @@ class TodoListWriteServiceTest {
 
     @DisplayName("Todo를 생성하면 '할 일' 상태를 기본으로 갖는다.")
     @Test
-    void creaeTodoBaseStatusTODO() {
+    void createTodoBaseStatusTODO() {
         //given
         String nickname = "nickname";
         String loginId = "loginId";
@@ -86,7 +86,7 @@ class TodoListWriteServiceTest {
             .hasSize(1)
             .extracting("status")
             .contains(
-                tuple(TodoStatus.TODO)
+                TodoStatus.TODO
             );
     }
 
@@ -104,6 +104,6 @@ class TodoListWriteServiceTest {
 
         //then
         assertThat(todoListException.getExceptionMessage()).isEqualTo("회원이 존재하지 않습니다.");
-        assertThat(todoListException.getExceptionStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(todoListException.getExceptionStatus()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

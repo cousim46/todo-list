@@ -184,7 +184,7 @@ class AccountWriteServiceTest {
             () -> accountWriteService.withdraw(accountId));
 
         //then
-        assertThat(todoListException.getExceptionStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(todoListException.getExceptionStatus()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(todoListException.getExceptionMessage()).isEqualTo("회원이 존재하지 않습니다.");
     }
 
