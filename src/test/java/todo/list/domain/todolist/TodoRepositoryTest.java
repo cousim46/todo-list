@@ -78,4 +78,29 @@ class TodoRepositoryTest {
                 tuple("title1", "content1")
             );
     }
+
+    @DisplayName("Todo id와 회원으로 Todo를 조회한다.")
+    @Test
+    void findByIdAndAccount() {
+        String nickname = "nickname";
+        String loginId = "loginId";
+        String password = "password";
+        String salt = "salt";
+        Account account = Account.signUp(nickname, loginId, password, salt);
+        Account savedAccount = accountRepository.save(account);
+        String title = "title";
+        String content = "content";
+        Todo todo = Todo.create(title, content, savedAccount);
+        Todo savedTodo = todoRepository.save(todo);
+
+        //when
+        Optional<Todo> findTodo = todoRepository.findByIdAndAccount(savedTodo.getId(),
+            savedAccount);
+
+        //then
+        Todo getTodo = findTodo.get();
+        assertThat(getTodo.getContent()).isEqualTo(content);
+        assertThat(getTodo.getTitle()).isEqualTo(title);
+        assertThat(getTodo.getId()).isEqualTo(savedTodo.getId());
+    }
 }
