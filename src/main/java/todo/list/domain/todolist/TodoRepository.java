@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import todo.list.domain.account.Account;
 
 public interface TodoRepository extends JpaRepository<Todo, Long> {
 
@@ -12,5 +13,5 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     Optional<Todo> findRecent(@Param("accountId") Long accountId);
 
     List<Todo> findAllByAccountIdOrderByUpdatedAtDesc(@Param("accountId") Long accountId);
-
+    Optional<Todo> findByIdAndAccount(Long id, Account account);
 }
