@@ -50,5 +50,28 @@ class TodoTest {
         //then
         assertThat(todo.getStatus()).isEqualTo(TodoStatus.TODO);
     }
+    @DisplayName("Todo의 상태를 변경한다.")
+    @Test
+    void updateStatus() {
+        String nickname = "nickname";
+        String loginId = "loginId";
+        String password = "password";
+        String salt = "salt";
+        Account account = Account.signUp(nickname, loginId, password, salt);
+
+        String title = "title";
+        String content = "content";
+
+        Todo todo = Todo.create(title, content, account);
+        TodoStatus beforeStatus = todo.getStatus();
+        TodoStatus afterStatus = TodoStatus.IN_PROGRESS;
+
+        //when
+        todo.updateStatus(afterStatus);
+
+        //then
+        assertThat(todo.getStatus()).isEqualTo(afterStatus);
+        assertThat(todo.getStatus()).isNotEqualTo(beforeStatus);
+    }
 
 }
