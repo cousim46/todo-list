@@ -90,7 +90,7 @@ class TodoListWriteServiceTest {
             );
     }
 
-    @DisplayName("Todo를 생서하려는 회원이 존재하지 않으면 예외가 발생한다.")
+    @DisplayName("Todo를 생성하려는 회원이 존재하지 않으면 예외가 발생한다.")
     @Test
     void occurCreateTodoNotExistAccountException() {
         //given
