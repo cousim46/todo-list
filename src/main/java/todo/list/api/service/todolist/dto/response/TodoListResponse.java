@@ -2,8 +2,8 @@ package todo.list.api.service.todolist.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
-import todo.list.api.service.todolist.dto.enums.TodoStatus;
 import todo.list.domain.todolist.Todo;
+import todo.list.domain.todolist.enums.TodoStatus;
 
 public record TodoListResponse(
     String nickname,
@@ -20,7 +20,7 @@ public record TodoListResponse(
             nickname,
             todo.getTitle(),
             todo.getContent(),
-            TodoStatus.valueOf(todo.returnStatusName()),
+            todo.getStatus(),
             todo.getCreatedAt(),
             todo.getUpdatedAt()
         );
