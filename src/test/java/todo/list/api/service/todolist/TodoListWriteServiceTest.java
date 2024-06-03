@@ -44,7 +44,8 @@ class TodoListWriteServiceTest {
         String loginId = "loginId";
         String password = "password";
         String salt = "salt";
-        Account savedAccount = accountRepository.save(Account.signUp(nickname, loginId, password, salt));
+        Account savedAccount = accountRepository.save(
+            Account.signUp(nickname, loginId, password, salt));
 
         String title = "title";
         String content = "content";
@@ -59,6 +60,33 @@ class TodoListWriteServiceTest {
             .extracting("title", "content", "status")
             .contains(
                 tuple(title, content, TodoStatus.TODO)
+            );
+    }
+
+    @DisplayName("Todo를 생성하면 '할 일' 상태를 기본으로 갖는다.")
+    @Test
+    void creaeTodoBaseStatusTODO() {
+        //given
+        String nickname = "nickname";
+        String loginId = "loginId";
+        String password = "password";
+        String salt = "salt";
+        Account savedAccount = accountRepository.save(
+            Account.signUp(nickname, loginId, password, salt));
+
+        String title = "title";
+        String content = "content";
+
+        //when
+        todoListWriteService.create(savedAccount.getId(), title, content);
+
+        //then
+        List<Todo> todoList = todoRepository.findAll();
+        assertThat(todoList)
+            .hasSize(1)
+            .extracting("status")
+            .contains(
+                tuple(TodoStatus.TODO)
             );
     }
 
