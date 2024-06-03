@@ -15,7 +15,7 @@ import todo.list.api.controller.account.dto.response.TokenInfoResponse;
 import todo.list.api.controller.account.helper.PasswordHelper;
 import todo.list.api.controller.annotation.LoginUser;
 import todo.list.api.controller.dto.request.LoginUserInfo;
-import todo.list.api.dto.response.CommonResponse;
+import todo.list.api.controller.dto.response.CommonResponse;
 import todo.list.api.service.account.AccountWriteService;
 
 @RequiredArgsConstructor

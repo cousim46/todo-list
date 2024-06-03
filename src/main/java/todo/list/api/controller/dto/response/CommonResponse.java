@@ -1,4 +1,4 @@
-package todo.list.api.dto.response;
+package todo.list.api.controller.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
