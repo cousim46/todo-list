@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 @Getter
 public enum ErrorCode {
+    //400
+    NOT_EXIST_TODO(HttpStatus.NOT_FOUND,"존재하지 않는 Todo입니다."),
+    NOT_EXIST_ACCOUNT_INFO(HttpStatus.NOT_FOUND,"회원이 존재하지 않습니다."),
     //401
     EXPIRE_TOKEN_TIME(HttpStatus.UNAUTHORIZED,"토큰시간이 만료되었습니다."),
 
@@ -14,7 +17,6 @@ public enum ErrorCode {
     NO_AUTHENTICATION(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
 
     //404
-    NOT_EXIST_ACCOUNT_INFO(HttpStatus.BAD_REQUEST,"회원이 존재하지 않습니다."),
     NOT_MATCH_PASSWORD_OR_ID(HttpStatus.BAD_REQUEST,"아이디 또는 비밀번호가 올바르지 않습니다."),
 
     //409
