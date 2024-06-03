@@ -40,7 +40,4 @@ public class Todo extends BaseEntity {
     public static Todo create(String title, String content, Account account) {
         return new Todo(title, content, TodoStatus.TODO, account);
     }
-    public String returnStatusName() {
-        return status.name();
-    }
 }
