@@ -1,0 +1,22 @@
+POST localhost:8080/api/accounts
+Content-Type: application/json
+
+{
+  "loginId": "test",
+  "nickname": "nickname",
+  "password": "1234"
+}
+
+### 로그인
+POST localhost:8080/api/accounts/login
+Content-Type: application/json
+
+{
+  "loginId": "test",
+  "password": "1234"
+}
+
+### 탈퇴
+DELETE localhost:8080/api/accounts
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTc1MDMwODd9.bGBVwhp8HFU2QioWEhBF15VYtfiDjJwR4kW6w69AUJNaaIqofDOb0xMDWXXamP06puhkZ7XO9zdtR6nctod7Vg

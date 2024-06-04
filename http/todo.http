@@ -1,0 +1,22 @@
+POST localhost:8080/api/todo
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTc1MDMwODd9.bGBVwhp8HFU2QioWEhBF15VYtfiDjJwR4kW6w69AUJNaaIqofDOb0xMDWXXamP06puhkZ7XO9zdtR6nctod7Vg
+
+{
+  "title": "title4",
+  "content": "content4"
+}
+
+### 조회
+GET localhost:8080/api/todo?type=ALL
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTc0OTU4MjJ9.4l3VJQyrSaN065vCz_Kpp_m9ldtSvrRyJuRiqZ6WCgUN7TBDdRd-GpfTQbq701v5zN2gXJFtj9z2sEqg3UYgcA
+
+### 수정
+
+PUT localhost:8080/api/todo/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTc0OTY1MjR9.n6YNp3saD2mrfpeLM2KHbJ-YuxqRFuJIqG5LGOfB5OObu6ksKDM1bK3wqb7eDqBHgIoaYvnXTSZh6RSd4cmuRg
+
+{
+   "status" : "PENDING"
+}
