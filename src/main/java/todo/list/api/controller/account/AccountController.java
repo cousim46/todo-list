@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import todo.list.api.controller.account.dto.request.AccountSignUpRequest;
 import todo.list.api.controller.account.dto.request.LoginRequest;
+import todo.list.api.controller.account.dto.request.RefreshRequest;
 import todo.list.api.controller.account.dto.response.TokenInfoResponse;
 import todo.list.api.controller.account.helper.PasswordHelper;
 import todo.list.api.controller.annotation.LoginUser;
@@ -41,5 +42,13 @@ public class AccountController {
     @Secured("ROLE_USER")
     public void withdraw(@LoginUser LoginUserInfo loginUserInfo) {
         accountWriteService.withdraw(loginUserInfo.id());
+    }
+
+    @PostMapping("/refresh-token")
+    public CommonResponse<TokenInfoResponse> refreshToken(
+        @Valid @RequestBody RefreshRequest request) {
+        return CommonResponse.ok(
+            TokenInfoResponse.of(
+                accountWriteService.refreshToken(request.token(), LocalDateTime.now())));
     }
 }
