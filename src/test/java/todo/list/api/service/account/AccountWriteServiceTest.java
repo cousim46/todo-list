@@ -207,4 +207,58 @@ class AccountWriteServiceTest {
         assertThat(account).isNull();
 
     }
+
+    @DisplayName("액세스 토큰의 만료시간이 5분 지나면 리프레쉬 토큰으로 재발급한다.")
+    @Test
+    void expiredAccessTokenUpdateRefreshToken() {
+        //given
+        String email = "test@test.com";
+        String name = "name";
+        String password = "password";
+        String salt = "1234";
+        Account savedAccount = accountRepository.save(Account.signUp(email, name, password, salt));
+        String accessToken = "access";
+        String refreshToken = "refresh";
+        LocalDateTime accessTokenExpiredAt = LocalDateTime.of(2024, 5, 30, 10, 0, 0);
+        LocalDateTime refreshTokenExpiredAt = LocalDateTime.of(2024, 5, 30, 11, 0, 0);
+        Token token = Token.create(accessToken, accessTokenExpiredAt, savedAccount, refreshToken,
+            refreshTokenExpiredAt);
+        tokenRepository.save(token);
+
+        LocalDateTime now = LocalDateTime.of(2024, 5, 30, 10, 6, 0);
+        //when
+        TokenResponse tokenResponse = accountWriteService.refreshToken(refreshToken, now);
+
+        //then
+        assertThat(tokenResponse.accessToken()).isNotEqualTo(accessToken);
+        assertThat(tokenResponse.refreshToken()).isEqualTo(refreshToken);
+        assertThat(tokenResponse.accessTokenExpireAt()).isEqualTo(now.plusMinutes(5));
+    }
+
+    @DisplayName("재발급 하려는 리프레쉬 토큰이 없으면 예외가 발생한다.")
+    @Test
+    void occurNotExistRefreshTokenException() {
+        //given
+        String email = "test@test.com";
+        String name = "name";
+        String password = "password";
+        String salt = "salt";
+        Account savedAccount = accountRepository.save(Account.signUp(email, name, password, salt));
+        String accessToken = "access";
+        String refreshToken = "refresh";
+        LocalDateTime accessTokenExpiredAt = LocalDateTime.of(2024, 5, 30, 10, 0, 0);
+        LocalDateTime refreshTokenExpiredAt = LocalDateTime.of(2024, 5, 30, 11, 0, 0);
+        Token token = Token.create(accessToken, accessTokenExpiredAt, savedAccount, refreshToken,
+            refreshTokenExpiredAt);
+        tokenRepository.save(token);
+        String requestRefreshToken = "not";
+
+        //when
+        TodoListException todoListException = assertThrows(TodoListException.class,
+            () -> accountWriteService.refreshToken(requestRefreshToken, LocalDateTime.now()));
+
+        //then
+        assertThat(todoListException.getExceptionMessage()).isEqualTo("존재하지 않는 토큰 정보입니다.");
+        assertThat(todoListException.getExceptionStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
 }
