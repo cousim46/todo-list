@@ -15,7 +15,7 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database-platform: org.hibernate.dialect.H2Dialect
 jwt:
   secret-key : RnJhbWV3b3Jrc3ByaW5nQm9vdFZlcnNpb25UaHJlZUxhbmd1YWdlSmF2YURhdGFiYXNlSDJCYWNrZW5kRGV2bG9wZXJUZXN0
