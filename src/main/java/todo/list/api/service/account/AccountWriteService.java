@@ -2,6 +2,7 @@ package todo.list.api.service.account;
 
 
 import static todo.list.exception.ErrorCode.NOT_EXIST_ACCOUNT_INFO;
+import static todo.list.exception.ErrorCode.NOT_EXIST_TOKEN_INFO;
 import static todo.list.exception.ErrorCode.NOT_MATCH_PASSWORD_OR_ID;
 
 import java.time.LocalDateTime;
@@ -10,9 +11,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import todo.list.api.service.annotaion.WriteService;
 import todo.list.domain.account.Account;
 import todo.list.domain.account.AccountRepository;
+import todo.list.domain.token.Token;
 import todo.list.exception.ErrorCode;
 import todo.list.exception.TodoListException;
 import todo.list.token.TokenProvider;
+import todo.list.token.TokenRepository;
 import todo.list.token.response.TokenResponse;
 
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ public class AccountWriteService {
     private final BCryptPasswordEncoder encoder;
     private final AccountRepository accountRepository;
     private final TokenProvider tokenProvider;
+    private final TokenRepository tokenRepository;
 
     public void signUp(String loginId, String nickname, String password, String salt) {
         duplicateValidation(loginId, nickname);
@@ -40,6 +44,12 @@ public class AccountWriteService {
         Account account = accountRepository.findById(accountId)
             .orElseThrow(() -> new TodoListException(NOT_EXIST_ACCOUNT_INFO));
         accountRepository.delete(account);
+    }
+
+    public TokenResponse refreshToken(String refreshToken, LocalDateTime now) {
+        Token token = tokenRepository.findByRefreshToken(refreshToken)
+            .orElseThrow(() -> new TodoListException(NOT_EXIST_TOKEN_INFO));
+        return tokenProvider.get(token.returnAccountId(), token.returnRole(), now);
     }
 
     private void checkPassword(String inputPassword,String encodePassword, String salt) {
