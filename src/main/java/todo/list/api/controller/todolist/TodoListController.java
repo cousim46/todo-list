@@ -33,7 +33,7 @@ public class TodoListController {
     @PostMapping
     public void create(@LoginUser LoginUserInfo loginUserInfo,
         @Valid @RequestBody TodoCreateRequest request) {
-        todoListWriteService.create(loginUserInfo.id(), request.title(), request.title());
+        todoListWriteService.create(loginUserInfo.id(), request.title(), request.content());
     }
 
     @GetMapping
