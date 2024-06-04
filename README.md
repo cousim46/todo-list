@@ -7,6 +7,7 @@
 - 회원가입
 - 로그인
 - 회원 탈퇴
+- 토큰 재발급
 - Todo 생성
 - Todo 조회
 
@@ -65,6 +66,40 @@ Authorization: Bearer {엑세스 토큰 값}
 - 탈퇴 하려는 회원이 존재하지 않을 경우 예외가 발생한다.
 
 
+### 토큰 재발급
+
+POST /api/accounts/refresh-token
+
+Request Body
+
+```json
+{
+  "token": 리프레쉬토큰값
+}
+```
+
+Response Body
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": null,
+  "data": {
+    "id": 1,
+    "grantType": "Bearer",
+    "accessToken": "액세스 토큰",
+    "accessTokenExpireAt": "액세스 토큰 만료시간",
+    "refreshToken": "리프레쉬 토큰",
+    "refreshTokenExpireAt": "리프레쉬 토큰 만료시간"
+  }
+}
+```
+
+- 리프레쉬 토큰의 값이 Null일 경우 예외가 발생한다.
+- 리프레쉬 토큰의 값으로 조회할 때 토큰이 존재하지 않을 경우 예외가 발생한다.
+
+
 ### Todo 생성
 
 POST /api/todo
@@ -90,6 +125,9 @@ value : RECENT 또는 ALL
 
 Authorization: Bearer {액세스 토큰 값}
 
+- type을 RECENT로 하면 가장 최근 작성한 TODO 단 건을 조회한다.
+- type을 ALL로 하면 업데이트 시간 기준으로 내림차순으로 모두 조회한다.
+
 ### TODO 상태 변경
 
 PUT /api/todo/{todoId}
@@ -103,6 +141,8 @@ Authorization: Bearer {액세스 토큰 값}
   "status" : "TODO" // TODO, IN_PROGRESS,DONE, PENDING;
 }
 ```
+- 대기 상태로 변경을 할때 진행중 상태 외의 상태값에서 변경하려고 하면 예외가 발생한다.
+
 
 # 고민했던 부분
 
