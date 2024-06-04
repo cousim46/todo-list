@@ -6,6 +6,7 @@ import todo.list.domain.todolist.Todo;
 import todo.list.domain.todolist.enums.TodoStatus;
 
 public record TodoListResponse(
+    Long todoId,
     String nickname,
     String title,
     String content,
@@ -17,6 +18,7 @@ public record TodoListResponse(
 ) {
     public static TodoListResponse of(Todo todo, String nickname) {
         return new TodoListResponse(
+            todo.getId(),
             nickname,
             todo.getTitle(),
             todo.getContent(),
