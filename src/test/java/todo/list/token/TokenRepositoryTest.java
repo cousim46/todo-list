@@ -69,4 +69,29 @@ class TokenRepositoryTest {
         assertThat(findToken.getAccessExpireAt()).isEqualTo(token.getAccessExpireAt());
         assertThat(findToken.getRefreshExpireAt()).isEqualTo(token.getRefreshExpireAt());
     }
+
+    @DisplayName("리프레쉬 토큰 값으로 토큰을 조회한다.")
+    @Test
+    void findByRefreshToken() {
+        //given
+        String nickname = "nickname";
+        String loginId = "loginId";
+        String password = "password";
+        String salt = "salt";
+        Account account = Account.signUp(nickname, loginId, password, salt);
+        Account savedAccount = accountRepository.save(account);
+
+        Token token = Token.create("access", LocalDateTime.now(), savedAccount, "refresh",
+            LocalDateTime.now());
+        Token savedToken = tokenRepository.save(token);
+
+        //when
+        Token findToken = tokenRepository.findByRefreshToken(savedToken.getRefresh()).get();
+
+        //then
+        assertThat(findToken.getAccess()).isEqualTo(token.getAccess());
+        assertThat(findToken.getRefresh()).isEqualTo(token.getRefresh());
+        assertThat(findToken.getAccessExpireAt()).isEqualTo(token.getAccessExpireAt());
+        assertThat(findToken.getRefreshExpireAt()).isEqualTo(token.getRefreshExpireAt());
+    }
 }
