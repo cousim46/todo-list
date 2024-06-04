@@ -21,6 +21,7 @@ public enum ErrorCode {
     //404
     NOT_EXIST_TODO(HttpStatus.NOT_FOUND,"존재하지 않는 Todo입니다."),
     NOT_EXIST_ACCOUNT_INFO(HttpStatus.NOT_FOUND,"회원이 존재하지 않습니다."),
+    NOT_EXIST_TOKEN_INFO(HttpStatus.BAD_REQUEST,"존재하지 않는 토큰 정보입니다."),
 
     //409
     DUPLICATE_LOGIN_ID(HttpStatus.CONFLICT,"중복된 아이디가 존재합니다."),
