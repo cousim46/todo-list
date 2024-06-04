@@ -50,4 +50,10 @@ public class Token extends BaseEntity {
         this.refresh = refresh;
         this.refreshExpireAt = refreshExpireAt;
     }
+    public Long returnAccountId() {
+        return account != null ? account.getId() : null;
+    }
+    public String returnRole() {
+        return account != null ? account.getRoleName() : null;
+    }
 }
